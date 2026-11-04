@@ -53,6 +53,10 @@ public class Bb implements Serializable {
      */
     private StringBuilder conversation = new StringBuilder();
 
+    private boolean debug;
+    private String texteRequeteJson;
+    private String texteReponseJson;
+
     /**
      * Service pour modifier la question et générer la réponse.
      */
@@ -110,6 +114,30 @@ public class Bb implements Serializable {
 
     public void setConversation(String conversation) {
         this.conversation = new StringBuilder(conversation);
+    }
+
+    public boolean isDebug() {
+        return debug;
+    }
+
+    public void setDebug(boolean debug) {
+        this.debug = debug;
+    }
+
+    public String getTexteRequeteJson() {
+        return texteRequeteJson;
+    }
+
+    public void setTexteRequeteJson(String texteRequeteJson) {
+        this.texteRequeteJson = texteRequeteJson;
+    }
+
+    public String getTexteReponseJson() {
+        return texteReponseJson;
+    }
+
+    public void setTexteReponseJson(String texteReponseJson) {
+        this.texteReponseJson = texteReponseJson;
     }
 
     /**
