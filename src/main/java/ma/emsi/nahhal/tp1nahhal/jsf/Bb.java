@@ -6,7 +6,9 @@ import jakarta.faces.model.SelectItem;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
-import ma.emsi.nahhal.tp0nahhal.service.GenerateurReponse;
+import ma.emsi.nahhal.tp1nahhal.llm.JsonAdapterPourGemini;
+import ma.emsi.nahhal.tp1nahhal.llm.LlmInteraction;
+import java.util.Arrays;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -61,7 +63,7 @@ public class Bb implements Serializable {
      * Service pour modifier la question et générer la réponse.
      */
     @Inject
-    private GenerateurReponse generateurReponse;
+    private JsonAdapterPourGemini jsonAdapter;
 
     /**
      * Contexte JSF. Utilisé pour qu'un message d'erreur s'affiche dans le formulaire.
@@ -150,25 +152,35 @@ public class Bb implements Serializable {
      */
     public String envoyer() {
         if (this.question == null || this.question.isBlank()) {
-            // Erreur ! Le formulaire va être réaffiché en réponse à la requête POST, avec un message d'erreur.
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR,
                     "Texte question vide", "Il manque le texte de la question");
             facesContext.addMessage(null, message);
             return null;
         }
 
-        // Traite la question pour construire la réponse.
-        if (this.conversation.isEmpty()) { // Si la conversation n'a pas encore commencé
-            // Fige la liste déroulante qui permet de choisir le rôle système
+        if (this.conversation.isEmpty()) {
             this.roleSystemeChangeable = false;
+            this.jsonAdapter.setSystemRole(this.roleSysteme);
         }
-        this.reponse = this.generateurReponse.genererReponse(this.question, this.roleSysteme);
 
-        // La conversation contient l'historique des questions-réponses depuis le début.
+        try {
+            LlmInteraction interaction = jsonAdapter.envoyerRequete(question);
+            this.reponse = interaction.reponseExtraite();
+            this.texteRequeteJson = interaction.questionJson();
+            this.texteReponseJson = interaction.reponseJson();
+        } catch (Exception e) {
+            this.reponse = "Erreur : " + e.getMessage();
+            FacesMessage message = new FacesMessage(
+                    FacesMessage.SEVERITY_ERROR,
+                    "Problème de connexion avec l'API du LLM",
+                    "Problème de connexion avec l'API du LLM"
+                            + e.getMessage() + "\n" + Arrays.toString(e.getStackTrace()));
+            facesContext.addMessage(null, message);
+        }
+
         afficherConversation();
         return null;
     }
-
     /**
      * Pour un nouveau chat.
      * Termine la portée view en retournant "index" (la page index.xhtml sera affichée après le traitement

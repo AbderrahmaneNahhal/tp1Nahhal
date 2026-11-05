@@ -41,7 +41,7 @@ public class LlmClientPourGemini implements Serializable {
         this.target = clientRest
                 .target("https://generativelanguage.googleapis.com/v1beta/models/"
                         + "gemini-3.5-flash-lite:generateContent")
-                .queryParam("key", this.key);"A CHERCHER DANS LE COURS...");
+                .queryParam("key", this.key);
     }
 
     /**
