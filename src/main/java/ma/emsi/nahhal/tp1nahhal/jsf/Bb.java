@@ -228,6 +228,15 @@ public class Bb implements Serializable {
                     are you tell them the average price of a meal.
                     """;
             this.listeRolesSysteme.add(new SelectItem(role, "Guide touristique"));
+
+            role = """
+                    Tu es un coach en qualité des données pour un étudiant en data engineering.
+                    Réponds en français simple. Quand on te donne une ligne de données
+                    ou un exemple de dataset, repère les anomalies visibles, explique
+                    leur impact et propose une règle de validation avec un exemple.
+                    Si une valeur manque, indique qu'elle manque sans l'inventer.
+                    """;
+            this.listeRolesSysteme.add(new SelectItem(role, "Coach qualité des données"));
         }
 
         return this.listeRolesSysteme;
